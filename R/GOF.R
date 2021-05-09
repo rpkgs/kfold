@@ -121,3 +121,19 @@ GOF <- function(Y_obs, Y_sim, w, include.cv = FALSE, include.r = TRUE){
     if (include.cv) out <- c(out, obs = CV_obs, sim = CV_sim)
     return(out)
 }
+
+
+cv_coef <- function (x, w) {
+    if (missing(w)) 
+        w <- rep(1, length(x))
+    if (length(x) == 0) {
+        return(c(mean = NA_real_, sd = NA_real_, cv = NA_real_))
+    }
+    I <- is.finite(x)
+    x <- x[I]
+    w <- w[I]
+    mean <- sum(x * w)/sum(w)
+    sd <- sqrt(sum((x - mean)^2 * w)/sum(w))
+    cv <- sd/mean
+    c(mean = mean, sd = sd, cv = cv)
+}

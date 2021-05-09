@@ -4,7 +4,15 @@
 \alias{rf_kford}
 \title{kfold randomForest}
 \usage{
-rf_kford(X, Y, kfold = 5, ...)
+rf_kford(X, Y, kfold = 5, ntree = 500, ...)
+}
+\arguments{
+\item{ntree}{Number of trees to grow.  This should not be set to too
+    small a number, to ensure that every input row gets predicted at
+    least a few times. }
+
+\item{...}{optional parameters to be passed to the low level function
+    \code{randomForest.default}.}
 }
 \description{
 kfold randomForest

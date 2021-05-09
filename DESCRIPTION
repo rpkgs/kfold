@@ -11,9 +11,10 @@ Description: What the package does (one paragraph).
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
 Imports: 
     hydroGOF,
     randomForest,
-    xgboost
+    xgboost,
+    caret, data.table, magrittr, plyr, purrr
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
