@@ -1,5 +1,6 @@
 #' @export
 ml_kfold <- function(index, X, Y, FUN = xgboost, ...) {
+    
     x_train <- X[-index, , drop = F]
     y_train <- Y[-index, , drop = F]
 
@@ -11,6 +12,7 @@ ml_kfold <- function(index, X, Y, FUN = xgboost, ...) {
     list(model = m, info = GOF(y_test, ypred), ypred = ypred)
 }
 
+#' @export
 tidy_kford <- function(res, ind_lst, Y) {
     kfold_names <- names(ind_lst)
 

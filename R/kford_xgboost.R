@@ -2,7 +2,7 @@
 #' @inheritParams xgboost::xgboost
 #' @import xgboost
 #' @export
-xgboost_kford <- function(X, Y, kfold = 5, verbose = FALSE, nrounds = 500, ...){ #, threshold = 5000    
+kford_xgboost <- function(X, Y, kfold = 5, verbose = FALSE, nrounds = 500, ...){ #, threshold = 5000    
     set.seed(100)
     ind_lst <- createFolds(1:nrow(X), k = kfold, list = TRUE)
 

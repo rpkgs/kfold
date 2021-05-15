@@ -1,7 +1,6 @@
 #' @keywords internal
 #' @importFrom stats predict cor.test setNames
 #' @importFrom data.table data.table as.data.table
-#' @importFrom caret createFolds
 #' @importFrom purrr map is_empty
 #' @import magrittr
 #' 
