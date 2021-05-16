@@ -4,12 +4,12 @@
 \name{MLrunoff-package}
 \alias{MLrunoff}
 \alias{MLrunoff-package}
-\title{MLrunoff: What the Package Does (One Line, Title Case)}
+\title{MLrunoff: Machine Learning for Runoff Prediction}
 \description{
 What the package does (one paragraph).
 }
 \author{
-\strong{Maintainer}: First Last \email{first.last@example.com} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+\strong{Maintainer}: Dongdong Kong \email{kongdd.sysu@gmail.com} (\href{https://orcid.org/0000-0003-1836-8172}{ORCID})
 
 }
 \keyword{internal}

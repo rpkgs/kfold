@@ -1,6 +1,6 @@
 #' @export
 ml_kfold <- function(index, X, Y, FUN = xgboost, ...) {
-    
+
     x_train <- X[-index, , drop = F]
     y_train <- Y[-index, , drop = F]
 
@@ -29,5 +29,10 @@ tidy_kford <- function(res, ind_lst, Y) {
         as.data.table()
     info$kford <- c(kfold_names, "all")
 
-    listk(model, ypred, info) # how to return back to original value?
+    listk(model, ypred, info) %>% set_class("kfold") # how to return back to original value?
+}
+
+#' @export
+predict.kfold <- function(object, newdata, ...) {
+    lapply(obj$model, function(m) predict(m, newdata, ...))
 }

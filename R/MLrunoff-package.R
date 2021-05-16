@@ -1,7 +1,9 @@
 #' @keywords internal
-#' @importFrom stats predict cor.test setNames
+#' @importFrom stats predict cor.test setNames quantile
 #' @importFrom data.table data.table as.data.table
 #' @importFrom purrr map is_empty
+#' @importFrom dplyr mutate across 
+#' @importFrom tidyselect where
 #' @import magrittr
 #' 
 "_PACKAGE"
