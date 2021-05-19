@@ -18,7 +18,7 @@ previous_tn.default <- function(x, n = 7, prefix = "", ...) {
         c("t", .) %>%
         paste0(prefix, .)
     lapply(1:n, function(i) {
-        n_head <- i
+        # n_head <- i
         n_tail <- len - i #+ 1
         c(rep(NA_real_, i), x[1:n_tail])
     }) %>%
@@ -32,7 +32,7 @@ previous_tn.default <- function(x, n = 7, prefix = "", ...) {
 previous_tn.data.frame <- function(x, n = 7, ...) {
     x %>% {
         mapply(previous_tn, .,
-            n = 7, prefix = names(.) %>% paste0("_"),
+            n = n, prefix = names(.) %>% paste0("_"),
             SIMPLIFY = FALSE
         )
     }

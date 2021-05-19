@@ -34,5 +34,5 @@ tidy_kford <- function(res, ind_lst, Y) {
 
 #' @export
 predict.kfold <- function(object, newdata, ...) {
-    lapply(obj$model, function(m) predict(m, newdata, ...))
+    lapply(object$model, function(m) predict(m, newdata, ...))
 }

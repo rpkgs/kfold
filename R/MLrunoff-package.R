@@ -3,7 +3,6 @@
 #' @importFrom data.table data.table as.data.table
 #' @importFrom purrr map is_empty
 #' @importFrom dplyr mutate across 
-#' @importFrom tidyselect where
 #' @import magrittr
 #' 
 "_PACKAGE"

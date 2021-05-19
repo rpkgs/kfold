@@ -10,7 +10,9 @@ library(Ipaper)
 # library(plyr)
 
 df = fread("data-raw/INPUTS_daily.csv") %>% reorder_name(c("time", "Y"))
-INPUTS = df[, -1] %>% previous_tn()
+INPUTS = df[, -1] %>% previous_tn(n = 7)
+mat <- do.call(cbind, INPUTS)
+# fwrite(mat %>% data.table(), "Runoff_daily_Previous_t6.csv")
 tests <- read_xlsx2list("data-raw/检验数据集.xlsx") %>%
     map(~reorder_name(.[, -1], "Y"))
 
@@ -45,7 +47,7 @@ select_vars <- function(df, day_pred) {
     }
     d_pred = purrr::transpose(res) %>% map(~melt_list(., "day"))
     d_pred$pred %<>% .[order(period, day)] %>% reorder_name(c("period"))
-    write_list2xlsx(d_pred, "RF_5检验时段_预报结果.xlsx")
+    # write_list2xlsx(d_pred, "RF_5检验时段_预报结果.xlsx")
 }
 
 # write_fig({
