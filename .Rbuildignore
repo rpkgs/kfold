@@ -1,7 +1,8 @@
-^MLrunoff\.Rproj$
+^kfold\.Rproj$
 ^\.Rproj\.user$
 ^data-raw$
 ^LICENSE\.md$
 ^scripts$
 ^OUTPUT$
 ^\.github$
+^README\.Rmd$

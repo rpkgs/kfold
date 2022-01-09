@@ -1,21 +1,21 @@
-Package: MLrunoff
+Package: kfold
 Title: Machine Learning for Runoff Prediction
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: c(
     person("Dongdong", "Kong", role = c("aut", "cre"), 
         email = "kongdd.sysu@gmail.com", comment = c(ORCID = "0000-0003-1836-8172")))
-Description: What the package does (one paragraph).
+Description: Machine learning In k-fold cross validation .
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: 
     hydroGOF,
-    randomForest,
+    ranger, randomForest,
     xgboost,
     data.table,
     magrittr,
-    plyr,dplyr,tidyselect,
-    purrr,
-    ranger
+    plyr,
+    dplyr, tidyselect,
+    purrr
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2

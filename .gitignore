@@ -6,5 +6,6 @@
 
 *.rda
 *.csv
+*.xlsx
 
 *.pdf
