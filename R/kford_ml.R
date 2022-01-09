@@ -2,6 +2,8 @@
 #' @name kford_ml
 #' 
 #' @example R/example/ex-kfold_ml.R
+#' @seealso [ranger::ranger()], [xgboost::xgboost()]
+#' 
 #' @importFrom plyr llply
 #' @export
 kford_ml <- function(X, Y, kfold = 5, FUN, ...){ #, threshold = 5000
@@ -19,11 +21,11 @@ kford_ml <- function(X, Y, kfold = 5, FUN, ...){ #, threshold = 5000
     kford_tidy(res, ind_lst, Y)
 }
 
-#' @inheritParams randomForest::randomForest
+#' @inheritParams ranger::ranger
 #' @rdname kford_ml
 #' @export
 kford_rf <- function(X, Y, kfold = 5,
-    FUN = ranger, ntree = 500, ...)
+    FUN = ranger, ntree = 500, importance = "none", ...)
 {
     kford_ml(X, Y, kfold,
         # FUN = randomForest, ntree = ntree, ...)

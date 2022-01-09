@@ -1,11 +1,9 @@
 library(data.table)
 library(caret)
 library(magrittr)
-library(randomForest)
-library(xgboost)
+# library(randomForest)
+# library(xgboost)
 library(lubridate)
-library(foreach)
-library(iterators)
 library(Ipaper)
 # library(plyr)
 
@@ -43,7 +41,7 @@ select_vars <- function(df, day_pred) {
             ypred = predict(r_all, X_test) # kfold集合预报
             as.data.table(ypred)
         } %>% melt_list("period")
-        listk(pred, info = r_all$info[kford == "all", ])
+        listk(pred, info = r_all$gof[kford == "all", ])
     }
     d_pred = purrr::transpose(res) %>% map(~melt_list(., "day"))
     d_pred$pred %<>% .[order(period, day)] %>% reorder_name(c("period"))

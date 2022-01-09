@@ -9,24 +9,18 @@
 \usage{
 kford_ml(X, Y, kfold = 5, FUN, ...)
 
-kford_rf(X, Y, kfold = 5, FUN = ranger, ntree = 500, ...)
+kford_rf(X, Y, kfold = 5, FUN = ranger, ntree = 500, importance = "none", ...)
 
 kford_xgboost(X, Y, kfold = 5, verbose = FALSE, nrounds = 500, ...)
 
 kford_lm(X, Y, kfold = 5, ...)
 }
 \arguments{
-\item{...}{optional parameters to be passed to the low level function
-    \code{randomForest.default}.}
+\item{...}{Further arguments passed to or from other methods (currently ignored).}
 
-\item{ntree}{Number of trees to grow.  This should not be set to too
-    small a number, to ensure that every input row gets predicted at
-    least a few times. }
+\item{importance}{Variable importance mode, one of 'none', 'impurity', 'impurity_corrected', 'permutation'. The 'impurity' measure is the Gini index for classification, the variance of the responses for regression and the sum of test statistics (see \code{splitrule}) for survival.}
 
-\item{verbose}{If 0, xgboost will stay silent. If 1, it will print information about performance.
-If 2, some additional information will be printed out.
-Note that setting \code{verbose > 0} automatically engages the
-\code{cb.print.evaluation(period=1)} callback function.}
+\item{verbose}{Show computation status and estimated runtime.}
 
 \item{nrounds}{max number of boosting iterations.}
 }
@@ -39,7 +33,10 @@ n <- 100 ; p <- 2
 X <- matrix(rnorm(n * p), n, p) # no intercept!
 y <- rnorm(n)
 
-# r_rf  <- kford_rf(X, y)
 r_lm  <- kford_lm(X, y)
 r_xgb <- kford_xgboost(X, y)
+# r_rf  <- kford_rf(X, y)
+}
+\seealso{
+\code{\link[ranger:ranger]{ranger::ranger()}}, \code{\link[xgboost:xgb.train]{xgboost::xgboost()}}
 }

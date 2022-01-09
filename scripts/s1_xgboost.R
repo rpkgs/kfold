@@ -6,7 +6,7 @@ eval_kge <- function(preds, dtrain) {
 }
 
 {
-    r_xgb <- xgboost_kford(X, Y, 6,
+    r_xgb <- kford_xgboost(X, Y, 6,
         verbose = T, nrounds = 100,
         params = list(
             eval_metric = eval_kge, max_depth = 3,
