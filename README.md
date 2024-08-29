@@ -28,12 +28,12 @@ n <- 100 ; p <- 2
 X <- matrix(rnorm(n * p), n, p) # no intercept!
 y <- rnorm(n)
 
-# r_rf  <- kford_rf(X, y)
-r_lm  <- kford_lm(X, y)
+# r_rf  <- kfold_rf(X, y)
+r_lm  <- kfold_lm(X, y)
 #>   |                                                                              |                                                                      |   0%  |                                                                              |==============                                                        |  20%  |                                                                              |============================                                          |  40%  |                                                                              |==========================================                            |  60%  |                                                                              |========================================================              |  80%  |                                                                              |======================================================================| 100%
 r_lm
 #> # A tibble: 6 x 11
-#>      R2    NSE    KGE  RMSE   MAE   Bias Bias_perc n_sim      R pvalue kford
+#>      R2    NSE    KGE  RMSE   MAE   Bias Bias_perc n_sim      R pvalue kfold
 #>   <dbl>  <dbl>  <dbl> <dbl> <dbl>  <dbl>     <dbl> <dbl>  <dbl>  <dbl> <chr>
 #> 1 0.079 -0.275 -5.06  0.869 0.588  0.455    -5.96     20  0.282  0.229 Fold1
 #> 2 0.049 -0.77  -0.572 1.03  0.866 -0.533    -0.76     20 -0.222  0.348 Fold2

@@ -40,7 +40,7 @@ n <- 100 ; p <- 2
 X <- matrix(rnorm(n * p), n, p) # no intercept!
 y <- rnorm(n)
 
-# r_rf  <- kford_rf(X, y)
-r_lm  <- kford_lm(X, y)
+# r_rf  <- kfold_rf(X, y)
+r_lm  <- kfold_lm(X, y)
 r_lm
 ```

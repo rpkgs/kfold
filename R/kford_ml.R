@@ -1,50 +1,50 @@
 #' kfold machine learning
-#' @name kford_ml
+#' @name kfold_ml
 #' 
 #' @example R/example/ex-kfold_ml.R
 #' @seealso [ranger::ranger()], [xgboost::xgboost()]
 #' 
 #' @importFrom plyr llply
 #' @export
-kford_ml <- function(X, Y, kfold = 5, FUN, ...){ #, threshold = 5000
+kfold_ml <- function(X, Y, kfold = 5, FUN, ...){ #, threshold = 5000
     set.seed(100)
     X = as.matrix(X)
     Y = as.matrix(Y)
 
     ind_lst <- createFolds(1:nrow(X), k = kfold, list = TRUE)
-    res <- llply(ind_lst, kford_calib,
+    res <- llply(ind_lst, kfold_calib,
         X = X, Y = Y,
         # FUN = randomForest, ntree = ntree, ...,
         FUN = FUN, ...,
         .progress = "text"
     )
-    kford_tidy(res, ind_lst, Y)
+    kfold_tidy(res, ind_lst, Y)
 }
 
 #' @inheritParams ranger::ranger
-#' @rdname kford_ml
+#' @rdname kfold_ml
 #' @export
-kford_rf <- function(X, Y, kfold = 5,
+kfold_rf <- function(X, Y, kfold = 5,
     FUN = ranger, ntree = 500, importance = "none", ...)
 {
-    kford_ml(X, Y, kfold,
+    kfold_ml(X, Y, kfold,
         # FUN = randomForest, ntree = ntree, ...)
         FUN = FUN, ntree = ntree, ...)
 }
 
 #' @inheritParams xgboost::xgboost
 #' @import xgboost
-#' @rdname kford_ml
+#' @rdname kfold_ml
 #' @export
-kford_xgboost <- function(X, Y, kfold = 5, verbose = FALSE, nrounds = 500, ...) {
-    kford_ml(X, Y, kfold,
+kfold_xgboost <- function(X, Y, kfold = 5, verbose = FALSE, nrounds = 500, ...) {
+    kfold_ml(X, Y, kfold,
         FUN = xgboost, nrounds = nrounds, verbose = verbose, ...)
 }
 
-#' @rdname kford_ml
+#' @rdname kfold_ml
 #' @export
-kford_lm <- function(X, Y, kfold = 5, ...) {
-    kford_ml(X, Y, kfold, FUN = .lm2, ...)
+kfold_lm <- function(X, Y, kfold = 5, ...) {
+    kfold_ml(X, Y, kfold, FUN = .lm2, ...)
 }
 
 # rewrite ranger function

@@ -1,6 +1,6 @@
 Package: kfold
 Title: Machine Learning for Runoff Prediction
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(
     person("Dongdong", "Kong", role = c("aut", "cre"), 
         email = "kongdd.sysu@gmail.com", comment = c(ORCID = "0000-0003-1836-8172")))
@@ -18,4 +18,4 @@ Imports:
     dplyr, tidyselect,
     purrr
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.3.2
