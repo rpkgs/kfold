@@ -14,8 +14,10 @@ Imports:
     xgboost,
     data.table,
     magrittr,
-    plyr,
+    Ipaper, plyr,
     dplyr, tidyselect,
     purrr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
+Remotes:
+    rpkgs/Ipaper
