@@ -51,6 +51,7 @@ kfold_lm <- function(X, Y, kfold = 5, ...) {
 
 # rewrite ranger function
 # ' @import randomForest
+#' @export
 predict.ranger <- function(object, data = NULL, ...) {
     ranger:::predict.ranger(object, data, ...)$predictions
 }
@@ -68,6 +69,8 @@ ranger <- function(x, y, ntree = 500, ...) {
     ans
 }
 
+
+#' @export
 predict.lm2 <- function(object, data = NULL, ...) {
     ysim = cbind(1, data) %*% as.matrix(object$coefficients)
     ysim[, 1]
