@@ -21,6 +21,7 @@ kfold_calib <- function(X, Y, FUN = xgboost, index=NULL, ..., ratio_valid=0.3) {
 #' @export
 kfold_tidy <- function(res, ind_lst, Y) {
     kfold_names <- names(ind_lst)
+    if (is.null(kfold_names)) kfold_names <- paste0(seq_along(ind_lst))
 
     ## 3. GOF information get
     val <- map(res, ~ .x$ypred) %>% unlist() # pred value

@@ -22,7 +22,10 @@ kfold_lm(X, Y, kfold = 5, ...)
 
 \item{verbose}{Show computation status and estimated runtime.}
 
-\item{nrounds}{max number of boosting iterations.}
+\item{nrounds}{Number of boosting iterations / rounds.
+
+Note that the number of default boosting rounds here is not automatically tuned, and different
+problems will have vastly different optimal numbers of boosting rounds.}
 }
 \description{
 kfold machine learning
@@ -43,5 +46,5 @@ r = kfold_calib(X, y, ratio_valid = 0.7, nrounds=500, verbose=FALSE)
 r$gof
 }
 \seealso{
-\code{\link[ranger:ranger]{ranger::ranger()}}, \code{\link[xgboost:xgb.train]{xgboost::xgboost()}}
+\code{\link[ranger:ranger]{ranger::ranger()}}, \code{\link[xgboost:xgboost]{xgboost::xgboost()}}
 }
