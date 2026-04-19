@@ -3,6 +3,7 @@
 #' @importFrom data.table data.table as.data.table
 #' @importFrom purrr map is_empty
 #' @importFrom dplyr mutate across 
+#' @importFrom Ipaper melt_list
 #' @import magrittr
 #' 
 "_PACKAGE"
@@ -16,9 +17,7 @@ NULL
 .onLoad <- function(libname, pkgname) {
     if (getRversion() >= "2.15.1") {
         utils::globalVariables(
-            c(
-                "."
-            )
+            c(".")
         )
     }
 }

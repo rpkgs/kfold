@@ -151,7 +151,7 @@ GOF <- function(yobs, ysim, w, include.cv = FALSE, include.r = TRUE) {
 
     if (include.r) out <- c(R2 = R2, out, R = R, pvalue = pvalue)
     if (include.cv) out <- c(out, CV_obs = CV_obs, CV_sim = CV_sim)
-    return(out)
+    as.data.table(as.list(out))
 }
 
 #' weighted CV

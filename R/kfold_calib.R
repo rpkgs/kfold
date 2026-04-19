@@ -14,8 +14,14 @@ kfold_calib <- function(X, Y, FUN = xgboost, index=NULL, ..., ratio_valid=0.3) {
     y_test <- Y[index, , drop = F]
 
     m <- FUN(x_train, y_train, ...)
-    ypred <- predict(m, x_test)
-    list(gof = GOF(y_test, ypred), ypred = ypred, model = m)
+    ypred_train <- predict(m, x_train)
+    ypred_test <- predict(m, x_test)
+
+    gof = list(
+        train = GOF(y_train, ypred_train), 
+        test = GOF(y_test, ypred_test)
+    ) %>% melt_list("type")
+    list(gof = gof, ypred = ypred_test, model = m)
 }
 
 #' @export
@@ -23,19 +29,16 @@ kfold_tidy <- function(res, ind_lst, Y) {
     kfold_names <- names(ind_lst)
     if (is.null(kfold_names)) kfold_names <- paste0(seq_along(ind_lst))
 
-    ## 3. GOF information get
+    ## GOF information get
     val <- map(res, ~ .x$ypred) %>% unlist() # pred value
     ypred <- Y * NA
     ypred[unlist(ind_lst)] <- val
-    info_all <- GOF(Y, ypred)
+    info_all <- cbind(type = "valid", GOF(Y, ypred))
 
     model <- map(res, "model")
-    gof <- map(res, "gof") %>%
+    gof <- map(res, "gof") %>% set_names(kfold_names) %>% 
         c(., all = list(info_all)) %>%
-        do.call(rbind, .) %>%
-        as.data.table()
-    gof$kfold <- c(kfold_names, "all")
-
+        melt_list("kfold") %>% data.table()
     listk(gof, ypred, index = ind_lst, model) %>% set_class("kfold") # how to return back to original value?
 }
 

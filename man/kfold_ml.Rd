@@ -11,7 +11,7 @@ kfold_ml(X, Y, kfold = 5, FUN, ...)
 
 kfold_rf(X, Y, kfold = 5, FUN = ranger, ntree = 500, importance = "none", ...)
 
-kfold_xgboost(X, Y, kfold = 5, verbose = FALSE, nrounds = 500, ...)
+kfold_xgboost(X, Y, kfold = 5, nrounds = 500, ...)
 
 kfold_lm(X, Y, kfold = 5, ...)
 }
@@ -19,8 +19,6 @@ kfold_lm(X, Y, kfold = 5, ...)
 \item{...}{Further arguments passed to or from other methods (currently ignored).}
 
 \item{importance}{Variable importance mode, one of 'none', 'impurity', 'impurity_corrected', 'permutation'. The 'impurity' measure is the Gini index for classification, the variance of the responses for regression and the sum of test statistics (see \code{splitrule}) for survival.}
-
-\item{verbose}{Show computation status and estimated runtime.}
 
 \item{nrounds}{Number of boosting iterations / rounds.
 

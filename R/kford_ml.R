@@ -38,9 +38,8 @@ kfold_rf <- function(X, Y, kfold = 5,
 #' @import xgboost
 #' @rdname kfold_ml
 #' @export
-kfold_xgboost <- function(X, Y, kfold = 5, verbose = FALSE, nrounds = 500, ...) {
-    kfold_ml(X, Y, kfold,
-        FUN = xgboost, nrounds = nrounds, verbose = verbose, ...)
+kfold_xgboost <- function(X, Y, kfold = 5, nrounds = 500, ...) {
+    kfold_ml(X, Y, kfold, FUN = xgboost, nrounds = nrounds, ...)
 }
 
 #' @rdname kfold_ml
@@ -58,7 +57,7 @@ predict.ranger <- function(object, data = NULL, ...) {
 
 #' @import ranger
 ranger <- function(x, y, ntree = 500, ...) {
-    ranger::ranger(x = x, y = y, num.trees = ntree, ...)
+    ranger::ranger(x = x, y = drop(y), num.trees = ntree, ...)
 }
 
 # ' @export
