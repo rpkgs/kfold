@@ -4,6 +4,8 @@
 # kfold
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/rpkgs/rtrend/workflows/R-CMD-check/badge.svg)](https://github.com/rpkgs/rtrend/actions)
+[![codecov](https://codecov.io/gh/rpkgs/rtrend/branch/master/graph/badge.svg)](https://codecov.io/gh/rpkgs/rtrend)
 <!-- badges: end -->
 
 The goal of kfold is to …
