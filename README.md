@@ -22,6 +22,8 @@ This is a basic example which shows you how to solve a common problem:
 
 ``` r
 library(kfold)
+library(future)
+plan(multisession, workers = 5)
 
 # set.seed(1)
 n <- 100 ; p <- 2

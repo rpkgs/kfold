@@ -12,7 +12,15 @@
 # roxygen namespace tags. Modify with care!
 ## usethis namespace: start
 ## usethis namespace: end
+
+#' @importFrom future plan multisession
 NULL
+
+#' @export
+future::plan
+
+#' @export
+future::multisession
 
 .onLoad <- function(libname, pkgname) {
     if (getRversion() >= "2.15.1") {

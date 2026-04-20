@@ -5,6 +5,7 @@
 #' @seealso [ranger::ranger()], [xgboost::xgboost()]
 #' 
 #' @importFrom plyr llply
+#' @importFrom furrr future_map
 #' @export
 kfold_ml <- function(X, Y, kfold = 5, FUN, ...){ #, threshold = 5000
     set.seed(100)
@@ -14,11 +15,10 @@ kfold_ml <- function(X, Y, kfold = 5, FUN, ...){ #, threshold = 5000
     # ind_lst <- createFolds(1:nrow(X), k = kfold, list = TRUE)
     ind_lst <- Ipaper::chunk(1:nrow(X), kfold)
 
-    res <- llply(ind_lst, kfold_calib,
+    res <- future_map(ind_lst, kfold_calib,
         X = X, Y = Y,
-        # FUN = randomForest, ntree = ntree, ...,
         FUN = FUN, ...,
-        .progress = "text"
+        .progress = TRUE
     )
     kfold_tidy(res, ind_lst, Y)
 }
