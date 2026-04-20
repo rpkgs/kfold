@@ -33,12 +33,17 @@ kfold_tidy <- function(res, ind_lst, Y) {
     val <- map(res, ~ .x$ypred) %>% unlist() # pred value
     ypred <- Y * NA
     ypred[unlist(ind_lst)] <- val
-    info_all <- cbind(type = "valid", GOF(Y, ypred))
 
     model <- map(res, "model")
-    gof <- map(res, "gof") %>% set_names(kfold_names) %>% 
-        c(., all = list(info_all)) %>%
+    
+    gof_fold = map(res, "gof") %>% set_names(kfold_names) %>% 
         melt_list("kfold") %>% data.table()
+    
+    gof_all <- rbind(
+        cbind(kfold = "all", type = "train", gof_fold[type == "train", -(1:2)][, lapply(.SD, mean)]),
+        cbind(kfold = "all", type = "test", GOF(Y, ypred))
+    )
+    gof <- rbind(gof_fold, gof_all)
     listk(gof, ypred, index = ind_lst, model) %>% set_class("kfold") # how to return back to original value?
 }
 
