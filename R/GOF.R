@@ -119,16 +119,13 @@ GOF <- function(yobs, ysim, w, include.cv = FALSE, include.r = TRUE) {
         R <- NA_real_
         pvalue <- NA_real_
 
-        tryCatch(
-            {
-                cor.obj <- cor.valid(yobs, ysim, use = "complete.obs")
-                R <- cor.obj$estimate[[1]]
-                pvalue <- cor.obj$p.value
-            },
-            error = function(e) {
-                message(e$message)
-            }
-        )
+        tryCatch({
+            cor.obj <- cor.test(yobs, ysim, use = "complete.obs")
+            R <- cor.obj$estimate[[1]]
+            pvalue <- cor.obj$p.value
+        }, error = function(e) {
+            message(e$message)
+        })
         R2 <- R^2
     }
     # In Linear regression, R2 = R^2 (R is pearson cor)
