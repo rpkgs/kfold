@@ -1,12 +1,11 @@
-
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
-# kfold
-
 <!-- badges: start -->
+
 [![R-CMD-check](https://github.com/rpkgs/rtrend/workflows/R-CMD-check/badge.svg)](https://github.com/rpkgs/rtrend/actions)
 [![codecov](https://codecov.io/gh/rpkgs/rtrend/branch/master/graph/badge.svg)](https://codecov.io/gh/rpkgs/rtrend)
+
 <!-- badges: end -->
+
+# kfold
 
 The goal of kfold is to …
 
@@ -14,7 +13,7 @@ The goal of kfold is to …
 
 You can install the development version of kfold like so:
 
-``` r
+```r
 remotes::install_github("rpkgs/kfold")
 ```
 
@@ -22,8 +21,16 @@ remotes::install_github("rpkgs/kfold")
 
 This is a basic example which shows you how to solve a common problem:
 
-``` r
+```r
 library(kfold)
+#> Registered S3 method overwritten by 'Ipaper':
+#>   method           from
+#>   print.data.table data.table
+#> Registered S3 method overwritten by 'kfold':
+#>   method         from
+#>   predict.ranger ranger
+devtools::load_all()
+#> [1m[22m[36mℹ[39m Loading [34mkfold[39m
 library(future)
 plan(multisession, workers = 5)
 
@@ -33,25 +40,31 @@ X <- matrix(rnorm(n * p), n, p) # no intercept!
 y <- rnorm(n)
 
 # r_rf  <- kfold_rf(X, y)
-r_lm  <- kfold_lm(X, y)
-#>   |                                                                              |                                                                      |   0%  |                                                                              |==============                                                        |  20%  |                                                                              |============================                                          |  40%  |                                                                              |==========================================                            |  60%  |                                                                              |========================================================              |  80%  |                                                                              |======================================================================| 100%
+r_lm <- kfold_lm(X, y, .progress = FALSE)
 r_lm
-#> # A tibble: 6 x 11
-#>      R2    NSE    KGE  RMSE   MAE   Bias Bias_perc n_sim      R pvalue kfold
-#>   <dbl>  <dbl>  <dbl> <dbl> <dbl>  <dbl>     <dbl> <dbl>  <dbl>  <dbl> <chr>
-#> 1 0.079 -0.275 -5.06  0.869 0.588  0.455    -5.96     20  0.282  0.229 Fold1
-#> 2 0.049 -0.77  -0.572 1.03  0.866 -0.533    -0.76     20 -0.222  0.348 Fold2
-#> 3 0.006 -0.016 -0.657 0.957 0.747  0.121     1.08     20  0.077  0.748 Fold3
-#> 4 0.005 -0.011 -0.339 1.04  0.811 -0.129    -0.342    20  0.071  0.767 Fold4
-#> 5 0.054  0.035 -0.238 0.897 0.664  0.096     0.46     20  0.233  0.322 Fold5
-#> 6 0.003 -0.063 -0.319 0.962 0.735  0.002     0.008   100 -0.052  0.606 all  
-#> 
+
+#> # A tibble: 12 × 12
+#>    kfold type     R2    NSE    KGE  RMSE   MAE   Bias Bias_perc n_sim      R pvalue
+#>    <chr> <fct> <dbl>  <dbl>  <dbl> <dbl> <dbl>  <dbl>     <dbl> <dbl>  <dbl>  <dbl>
+#>  1 1     train 0.048  0.048 -0.105 0.917 0.751  0         0        80  0.219  0.051
+#>  2 1     test  0.017 -0.074 -0.469 1.12  0.872  0.069    -0.423    20 -0.131  0.583
+#>  3 2     train 0.018  0.018 -0.227 0.971 0.789  0         0        80  0.132  0.242
+#>  4 2     test  0     -0.047 -0.71  0.947 0.768 -0.122     1.14     20  0.018  0.94
+#>  5 3     train 0.022  0.022 -0.202 0.965 0.779  0         0        80  0.15   0.185
+#>  6 3     test  0.023  0.018 -0.314 0.935 0.77   0.061    -0.502    20  0.151  0.524
+#>  7 4     train 0.036  0.036 -0.147 0.95  0.772  0         0        80  0.189  0.093
+#>  8 4     test  0.057 -0.078 -0.518 1.01  0.839  0.011    -0.085    20 -0.24   0.309
+#>  9 5     train 0.018  0.018 -0.226 0.975 0.787  0         0        80  0.133  0.239
+#> 10 5     test  0.063  0.039 -0.202 0.893 0.747 -0.037     0.273    20  0.25   0.287
+#> 11 all   train 0.028  0.028 -0.181 0.955 0.776  0         0        80  0.165  0.162
+#> 12 all   test  0     -0.032 -0.322 0.985 0.799 -0.004     0.028   100 -0.02   0.84
+#>
 #> Folds:
 #> List of 5
-#>  $ Fold1: int [1:20] 1 15 16 20 25 28 29 40 47 49 ...
-#>  $ Fold2: int [1:20] 6 7 10 14 18 32 35 37 38 44 ...
-#>  $ Fold3: int [1:20] 11 17 19 21 23 27 36 39 41 45 ...
-#>  $ Fold4: int [1:20] 9 12 13 22 24 30 31 33 34 48 ...
-#>  $ Fold5: int [1:20] 2 3 4 5 8 26 42 43 46 50 ...
+#>  $ : int [1:20] 40 17 24 88 90 9 81 51 98 21 ...
+#>  $ : int [1:20] 25 4 31 29 15 96 23 85 38 35 ...
+#>  $ : int [1:20] 13 6 56 92 64 50 49 73 86 70 ...
+#>  $ : int [1:20] 19 12 89 30 52 61 45 53 75 74 ...
+#>  $ : int [1:20] 91 97 78 77 67 22 66 95 20 58 ...
 #> NULL
 ```

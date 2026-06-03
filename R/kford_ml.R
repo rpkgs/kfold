@@ -7,7 +7,7 @@
 #' @importFrom plyr llply
 #' @importFrom furrr future_map
 #' @export
-kfold_ml <- function(X, Y, kfold = 5, FUN, ...){ #, threshold = 5000
+kfold_ml <- function(X, Y, kfold = 5, FUN, ..., .progress=TRUE){ #, threshold = 5000
     set.seed(100)
     X = as.matrix(X)
     Y = as.matrix(Y)
@@ -19,7 +19,7 @@ kfold_ml <- function(X, Y, kfold = 5, FUN, ...){ #, threshold = 5000
     res <- future_map(ind_lst, kfold_calib,
         X = X, Y = Y,
         FUN = FUN, ...,
-        .progress = TRUE
+        .progress = .progress
     )
     kfold_tidy(res, ind_lst, Y)
 }
