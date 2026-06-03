@@ -2,7 +2,7 @@
 
 ## Package Overview
 
-`kfold` is an R package for stratified k-fold cross-validation of machine-learning models (Random Forest via `ranger`, XGBoost, linear models). It computes per-fold and aggregate GOF (Goodness of Fit) statistics for both train and test sets.
+`kfold` is an R package for stratified k-fold cross-validation of machine-learning models (Random Forest via `ranger`, XGBoost, linear models). It computes per-fold and aggregate GOF (Goodness of Fit) statistics for both train and valid sets.
 
 ## Key Files
 
@@ -23,19 +23,19 @@
 
 ### Step 2: Per-fold calibration (`kfold_calib`)
 
-For fold `i` with test indices `index_i`:
+For fold `i` with valid indices `index_i`:
 
 ```r
 x_train <- X[-index_i, ]   # ~(1 - 1/k) × N rows
-x_test  <- X[ index_i, ]   # ~(1/k) × N rows
+x_valid  <- X[ index_i, ]   # ~(1/k) × N rows
 
 m <- FUN(x_train, y_train)          # train model
 ypred_train <- predict(m, x_train)  # in-sample prediction
-ypred_test  <- predict(m, x_test)   # out-of-fold prediction
+ypred_valid  <- predict(m, x_valid)   # out-of-fold prediction
 
 gof = list(
     train = GOF(y_train, ypred_train),  # in-sample fit
-    test  = GOF(y_test,  ypred_test)    # out-of-fold fit
+    valid  = GOF(y_valid,  ypred_valid)    # out-of-fold fit
 )
 ```
 
@@ -47,28 +47,28 @@ gof_all <- rbind(
     cbind(kfold = "all", type = "train",
           gof_fold[type == "train", -(1:2)][, lapply(.SD, mean)]),
 
-    # test: single GOF call on ALL out-of-fold predictions stacked together
-    cbind(kfold = "all", type = "test",
-          GOF(Y, ypred))   # ypred assembled from all folds' ypred_test
+    # valid: single GOF call on ALL out-of-fold predictions stacked together
+    cbind(kfold = "all", type = "valid",
+          GOF(Y, ypred))   # ypred assembled from all folds' ypred_valid
 )
 ```
 
 #### `gof_all` train
 
 - **What it is**: Column-wise arithmetic mean of each fold's train-set GOF metrics.
-- **Interpretation**: Average in-sample fitting performance. Reflects how well the model memorizes the training data on average across folds. Expected to be optimistic (higher NSE/KGE, lower RMSE than test).
+- **Interpretation**: Average in-sample fitting performance. Reflects how well the model memorizes the training data on average across folds. Expected to be optimistic (higher NSE/KGE, lower RMSE than valid).
 
-#### `gof_all` test
+#### `gof_all` valid
 
 - **What it is**: A **single `GOF()` call** on the full `Y` vs. globally assembled out-of-fold predictions `ypred`. Each observation's prediction comes exclusively from the fold iteration where that observation was held out.
-- **Interpretation**: Unbiased estimate of generalization performance across the entire dataset. More statistically rigorous than averaging fold-level test GOFs, because it evaluates all N observations as one unit (no double-counting, no averaging of averages).
+- **Interpretation**: Unbiased estimate of generalization performance across the entire dataset. More statistically rigorous than averaging fold-level valid GOFs, because it evaluates all N observations as one unit (no double-counting, no averaging of averages).
 
 #### Key asymmetry
 
 |                 | Aggregation method                   | Observations evaluated  |
 | --------------- | ------------------------------------ | ----------------------- |
 | `gof_all` train | Mean of fold-level statistics        | ~(1 − 1/k) × N per fold |
-| `gof_all` test  | Single GOF on pooled OOF predictions | All N observations      |
+| `gof_all` valid | Single GOF on pooled OOF predictions | All N observations      |
 
 ---
 

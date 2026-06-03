@@ -121,7 +121,7 @@ GOF <- function(yobs, ysim, w, include.cv = FALSE, include.r = TRUE) {
 
         tryCatch(
             {
-                cor.obj <- cor.test(yobs, ysim, use = "complete.obs")
+                cor.obj <- cor.valid(yobs, ysim, use = "complete.obs")
                 R <- cor.obj$estimate[[1]]
                 pvalue <- cor.obj$p.value
             },

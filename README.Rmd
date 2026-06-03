@@ -20,8 +20,13 @@ knitr::opts_chunk$set(
 
 # kfold
 
+**三阶段定义：**
 
-The goal of kfold is to ...
+| 阶段      | 用途                 | 模型参数是否更新 | 谁来"看"这部分数据 |
+| --------- | -------------------- | ---------------- | ------------------ |
+| **train** | 拟合模型参数         | ✅ 更新          | 优化器（梯度下降） |
+| **valid** | 调超参、选模型、早停 | ❌ 不更新        | 人/调参逻辑        |
+| **test**  | 评估最终泛化性能     | ❌ 不更新        | 只看一次（最后）   |
 
 ## Installation
 
@@ -33,7 +38,6 @@ remotes::install_github("rpkgs/kfold")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
 
 ```{r example}
 library(kfold)
