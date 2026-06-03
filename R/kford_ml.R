@@ -5,7 +5,7 @@
 #' @seealso [ranger::ranger()], [xgboost::xgboost()]
 #' 
 #' @importFrom plyr llply
-#' @importFrom furrr future_map
+#' @importFrom furrr future_map furrr_options
 #' @export
 kfold_ml <- function(X, Y, kfold = 5, FUN, ..., .progress=TRUE){ #, threshold = 5000
     set.seed(100)
@@ -19,7 +19,8 @@ kfold_ml <- function(X, Y, kfold = 5, FUN, ..., .progress=TRUE){ #, threshold = 
     res <- future_map(ind_lst, kfold_calib,
         X = X, Y = Y,
         FUN = FUN, ...,
-        .progress = .progress
+        .progress = .progress,
+        .options = furrr_options(seed = TRUE)
     )
     kfold_tidy(res, ind_lst, Y)
 }
@@ -39,8 +40,8 @@ kfold_rf <- function(X, Y, kfold = 5,
 #' @import xgboost
 #' @rdname kfold_ml
 #' @export
-kfold_xgboost <- function(X, Y, kfold = 5, nrounds = 500, ...) {
-    kfold_ml(X, Y, kfold, FUN = xgboost, nrounds = nrounds, ...)
+kfold_xgboost <- function(X, Y, kfold = 5, FUN = xgboost, nrounds = 500, ...) {
+    kfold_ml(X, Y, kfold, FUN = FUN, nrounds = nrounds, ...)
 }
 
 #' @rdname kfold_ml

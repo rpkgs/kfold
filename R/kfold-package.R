@@ -1,5 +1,5 @@
 #' @keywords internal
-#' @importFrom stats predict cor.valid setNames quantile
+#' @importFrom stats predict cor.test setNames quantile
 #' @importFrom data.table data.table as.data.table
 #' @importFrom purrr map is_empty
 #' @importFrom dplyr mutate across 

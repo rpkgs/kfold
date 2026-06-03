@@ -11,7 +11,7 @@ kfold_ml(X, Y, kfold = 5, FUN, ..., .progress = TRUE)
 
 kfold_rf(X, Y, kfold = 5, FUN = ranger, ntree = 500, importance = "none", ...)
 
-kfold_xgboost(X, Y, kfold = 5, nrounds = 500, ...)
+kfold_xgboost(X, Y, kfold = 5, FUN = xgboost, nrounds = 500, ...)
 
 kfold_lm(X, Y, kfold = 5, ...)
 }
