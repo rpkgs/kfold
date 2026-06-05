@@ -60,9 +60,26 @@ NSE <- function(yobs, ysim, w, ...) {
 #' ysim <- yobs + rnorm(100) / 4
 #' GOF(yobs, ysim)
 #' @importFrom hydroGOF KGE
+#' @importFrom data.table rbindlist
 #' @export
-GOF <- function(yobs, ysim, w, include.cv = FALSE, include.r = TRUE) {
-    if (missing(w)) w <- rep(1, length(yobs))
+GOF <- function(yobs, ysim, w = NULL, include.cv = FALSE, include.r = TRUE, ..., 
+    idcol = "kfold", mode = "test") {
+    # 单序列直接算; 多序列 (list / 多列矩阵) 逐列计算后按行堆叠 (idcol = index)
+    if (is.list(ysim) || NCOL(ysim) > 1) {
+        cols <- if (is.list(ysim)) ysim else asplit(as.matrix(ysim), 2)
+        ans <- lapply(cols, \(s) .GOF(yobs, s, w, include.cv, include.r))
+        ans <- rbindlist(ans, idcol = idcol) %>% 
+            mutate(mode = mode, .after = 1)
+        return(ans)
+    }
+    .GOF(yobs, ysim, w, include.cv, include.r)
+}
+
+# .GOF: 单序列拟合优度核心算法 (供 GOF 的多序列分发层调用)
+.GOF <- function(yobs, ysim, w = NULL, include.cv = FALSE, include.r = TRUE) {
+    yobs <- as.numeric(yobs) # 去除 matrix 维度, 确保逐元素运算
+    ysim <- as.numeric(ysim)
+    if (is.null(w)) w <- rep(1, length(yobs))
 
     # remove NA_real_ and Inf values in ysim, yobs and w
     valid <- function(x) !is.na(x) & is.finite(x)

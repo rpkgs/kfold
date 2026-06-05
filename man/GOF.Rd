@@ -7,7 +7,16 @@
 \usage{
 NSE(yobs, ysim, w, ...)
 
-GOF(yobs, ysim, w, include.cv = FALSE, include.r = TRUE)
+GOF(
+  yobs,
+  ysim,
+  w = NULL,
+  include.cv = FALSE,
+  include.r = TRUE,
+  ...,
+  idcol = "kfold",
+  mode = "test"
+)
 }
 \arguments{
 \item{yobs}{Numeric vector, observations}
