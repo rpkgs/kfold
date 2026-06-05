@@ -22,7 +22,7 @@ kfold_ml <- function(X, Y, kfold = 5, FUN, ..., .progress=TRUE){ #, threshold = 
         .progress = .progress,
         .options = furrr_options(seed = TRUE)
     )
-    kfold_tidy(res, ind_lst, Y)
+    kfold_tidy(res, ind_lst, X, Y)
 }
 
 #' @inheritParams ranger::ranger

@@ -62,18 +62,42 @@ NSE <- function(yobs, ysim, w, ...) {
 #' @importFrom hydroGOF KGE
 #' @importFrom data.table rbindlist
 #' @export
-GOF <- function(yobs, ysim, w = NULL, include.cv = FALSE, include.r = TRUE, ..., 
-    idcol = "kfold", mode = "test") {
-    # 单序列直接算; 多序列 (list / 多列矩阵) 逐列计算后按行堆叠 (idcol = index)
+GOF <- function(yobs, ...) UseMethod("GOF")
+
+#' @rdname GOF
+#' @export
+GOF.default <- function(
+  yobs, ysim, w = NULL, include.cv = FALSE, include.r = TRUE, ...,
+  idcol = "kfold", mode = "test"
+) {
+    # 单序列直接算; 多序列 (list / 多列矩阵) 逐列计算后按行堆叠
     if (is.list(ysim) || NCOL(ysim) > 1) {
         cols <- if (is.list(ysim)) ysim else asplit(as.matrix(ysim), 2)
         ans <- lapply(cols, \(s) .GOF(yobs, s, w, include.cv, include.r))
-        ans <- rbindlist(ans, idcol = idcol) %>% 
+        ans <- rbindlist(ans, idcol = idcol) %>%
             mutate(mode = mode, .after = 1)
         return(ans)
     }
     .GOF(yobs, ysim, w, include.cv, include.r)
 }
+
+#' @rdname GOF
+#' @export
+GOF.kfold <- function(yobs, X_test = NULL, Y_test = NULL, ...) {
+    object <- yobs
+    if (is.null(X_test)) {
+        ypred_train <- predict(object, mode = "train")
+        ypred_valid <- predict(object, mode = "valid")
+        gof_train <- GOF(object$data$Y, ypred_train, mode = "train")
+        gof_valid <- GOF(object$data$Y, ypred_valid, mode = "valid")
+        rbind(gof_train, gof_valid)
+    } else {
+        # test 用外部测试集: X_test 算预测, Y_test 当 yobs (二者行数须一致)
+        ypred_test <- predict(object, X_test, mode = "test")
+        GOF(Y_test, ypred_test, mode = "test")
+    }
+}
+
 
 # .GOF: 单序列拟合优度核心算法 (供 GOF 的多序列分发层调用)
 .GOF <- function(yobs, ysim, w = NULL, include.cv = FALSE, include.r = TRUE) {
@@ -136,13 +160,16 @@ GOF <- function(yobs, ysim, w = NULL, include.cv = FALSE, include.r = TRUE, ...,
         R <- NA_real_
         pvalue <- NA_real_
 
-        tryCatch({
-            cor.obj <- cor.test(yobs, ysim, use = "complete.obs")
-            R <- cor.obj$estimate[[1]]
-            pvalue <- cor.obj$p.value
-        }, error = function(e) {
-            message(e$message)
-        })
+        tryCatch(
+            {
+                cor.obj <- cor.test(yobs, ysim, use = "complete.obs")
+                R <- cor.obj$estimate[[1]]
+                pvalue <- cor.obj$p.value
+            },
+            error = function(e) {
+                message(e$message)
+            }
+        )
         R2 <- R^2
     }
     # In Linear regression, R2 = R^2 (R is pearson cor)

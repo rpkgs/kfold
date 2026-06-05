@@ -87,7 +87,7 @@ relocate_xgb <- \(d) {
 gather_gof <- function(object, MODE = "valid", leads = seq_along(object$HydroMetQlagXGB)) {
   nms <- names(object$HydroMetQlagXGB)[leads] # 与训练一致的 lead 子集
   one <- function(fit, model, lead) {
-    fit$gof %>% rename(mode = type) %>%
+    fit$gof %>% rename(mode = mode) %>%
      .[kfold == "all" & mode == MODE] %>%
       mutate(model = model, lead = lead) %>% relocate_xgb()
   }

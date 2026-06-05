@@ -3,11 +3,15 @@
 \name{NSE}
 \alias{NSE}
 \alias{GOF}
+\alias{GOF.default}
+\alias{GOF.kfold}
 \title{GOF}
 \usage{
 NSE(yobs, ysim, w, ...)
 
-GOF(
+GOF(yobs, ...)
+
+\method{GOF}{default}(
   yobs,
   ysim,
   w = NULL,
@@ -17,6 +21,8 @@ GOF(
   idcol = "kfold",
   mode = "test"
 )
+
+\method{GOF}{kfold}(yobs, ...)
 }
 \arguments{
 \item{yobs}{Numeric vector, observations}

@@ -96,7 +96,7 @@ run_one_candidate <- function(spec, leads = names(X$HydroMetQlagXGB)) {
         fit <- do.call(model_xgb_fixed, c(list(X = Xi, Y = Y), args))
         gof <- copy(fit$gof[kfold == "all", -1])
         gof[, `:=`(lead = lead, candidate = spec$candidate)]
-        setcolorder(gof, c("candidate", "lead", "type"))
+        setcolorder(gof, c("candidate", "lead", "mode"))
         gof
     }) %>% rbindlist(fill = TRUE)
 }
@@ -210,7 +210,7 @@ print(dt_round(summary_valid, 4))
 # 逐 lead 看候选是否只是在个别 lead 上偶然赢。
 best_candidate <- summary_valid$candidate[1]
 lead_compare <- gof_search[
-    type == "valid" & candidate %in% c("base_eta030_d3_mcw5", best_candidate),
+    mode == "valid" & candidate %in% c("base_eta030_d3_mcw5", best_candidate),
     .(candidate, lead, NSE, KGE, RMSE, MAE)
 ][order(lead, candidate)]
 fwrite(lead_compare, "scripts/xgb_tuning/best_vs_base_by_lead.csv")
