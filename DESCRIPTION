@@ -6,8 +6,8 @@ Authors@R: c(
         email = "kongdd.sysu@gmail.com", comment = c(ORCID = "0000-0003-1836-8172")))
 Description: Machine learning In k-fold cross validation .
 License: MIT + file LICENSE
-Encoding: UTF-8
-LazyData: true
+Depends:
+    R (>= 4.1.0)
 Imports: 
     hydroGOF,
     ranger, randomForest,
@@ -21,3 +21,5 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Remotes:
     rpkgs/Ipaper
+Encoding: UTF-8
+LazyData: true

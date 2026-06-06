@@ -22,7 +22,7 @@ GOF(yobs, ...)
   mode = "test"
 )
 
-\method{GOF}{kfold}(yobs, ...)
+\method{GOF}{kfold}(yobs, test = NULL, ...)
 }
 \arguments{
 \item{yobs}{Numeric vector, observations}
@@ -35,6 +35,8 @@ calculating mean, Bias, MAE, RMSE and NSE, w will be taken into considered.}
 \item{include.cv}{If true, cv will be included.}
 
 \item{include.r}{If true, r and R2 will be included.}
+
+\item{test}{A list with \code{X} and \code{Y} for external testing. If NULL, GOF will be calculated}
 }
 \value{
 \itemize{

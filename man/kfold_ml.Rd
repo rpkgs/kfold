@@ -7,7 +7,15 @@
 \alias{kfold_lm}
 \title{kfold machine learning}
 \usage{
-kfold_ml(X, Y, kfold = 5, FUN, ..., .progress = TRUE)
+kfold_ml(
+  X,
+  Y,
+  kfold = 5,
+  FUN,
+  ...,
+  fn_chunk = chunk_stratified,
+  .progress = TRUE
+)
 
 kfold_rf(X, Y, kfold = 5, FUN = ranger, ntree = 500, importance = "none", ...)
 

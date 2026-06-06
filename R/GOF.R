@@ -81,11 +81,12 @@ GOF.default <- function(
     .GOF(yobs, ysim, w, include.cv, include.r)
 }
 
+#' @param test A list with `X` and `Y` for external testing. If NULL, GOF will be calculated
 #' @rdname GOF
 #' @export
-GOF.kfold <- function(yobs, X_test = NULL, Y_test = NULL, ...) {
+GOF.kfold <- function(yobs, test = NULL, ...) {
     object <- yobs
-    if (is.null(X_test)) {
+    if (is.null(test)) {
         ypred_train <- predict(object, mode = "train")
         ypred_valid <- predict(object, mode = "valid")
         gof_train <- GOF(object$data$Y, ypred_train, mode = "train")
@@ -93,8 +94,8 @@ GOF.kfold <- function(yobs, X_test = NULL, Y_test = NULL, ...) {
         rbind(gof_train, gof_valid)
     } else {
         # test 用外部测试集: X_test 算预测, Y_test 当 yobs (二者行数须一致)
-        ypred_test <- predict(object, X_test, mode = "test")
-        GOF(Y_test, ypred_test, mode = "test")
+        ypred_test <- predict(object, test$X, mode = "test")
+        GOF(test$Y, ypred_test, mode = "test")
     }
 }
 

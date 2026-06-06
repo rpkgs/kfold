@@ -7,14 +7,14 @@
 #' @importFrom plyr llply
 #' @importFrom furrr future_map furrr_options
 #' @export
-kfold_ml <- function(X, Y, kfold = 5, FUN, ..., .progress=TRUE){ #, threshold = 5000
+kfold_ml <- function(X, Y, kfold = 5, FUN, ..., 
+    fn_chunk = chunk_stratified, .progress=TRUE){ #, threshold = 5000
     set.seed(100)
     X = as.matrix(X)
     Y = as.matrix(Y)
 
     # ind_lst <- createFolds(1:nrow(X), k = kfold, list = TRUE)
-    # ind_lst <- Ipaper::chunk(1:nrow(X), kfold)
-    ind_lst <- chunk_stratified(Y, kfold)
+    ind_lst <- fn_chunk(Y, kfold)
 
     res <- future_map(ind_lst, kfold_calib,
         X = X, Y = Y,
@@ -22,7 +22,12 @@ kfold_ml <- function(X, Y, kfold = 5, FUN, ..., .progress=TRUE){ #, threshold = 
         .progress = .progress,
         .options = furrr_options(seed = TRUE)
     )
-    kfold_tidy(res, ind_lst, X, Y)
+
+    kfold_names <- names(ind_lst)
+    data <- listk(X, Y)
+    index <- set_names(ind_lst, kfold_names)
+    model <- map(res, "model") %>% set_names(kfold_names)
+    listk(data, index, model) %>% set_class("kfold")
 }
 
 #' @inheritParams ranger::ranger
@@ -68,7 +73,7 @@ ranger <- function(x, y, ntree = 500, ...) {
 
 #' @export
 print.kfold <- function(x, ...) {
-    print(x$gof %>% dplyr::tibble() %>% dt_round(3)) # 
+    print(GOF(x) %>% dplyr::tibble() %>% dt_round(3)) # train + valid gof
     cat("\nFolds:\n")
     print(str(x$index))
 }

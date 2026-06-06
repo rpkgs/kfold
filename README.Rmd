@@ -38,7 +38,6 @@ remotes::install_github("rpkgs/kfold")
 
 ## Example
 
-
 ```{r example}
 library(kfold)
 devtools::load_all()
@@ -53,4 +52,24 @@ y <- rnorm(n)
 # r_rf  <- kfold_rf(X, y)
 r_lm <- kfold_lm(X, y, .progress = FALSE)
 r_lm
+```
+
+```{r}
+set.seed(1)
+# train + valid
+X <- matrix(rnorm(300), 100, 3); colnames(X) <- c("a", "b", "c")
+Y <- X %*% c(1, -2, 0.5) + rnorm(100)
+
+# test
+Xt <- matrix(rnorm(60), 20, 3); colnames(Xt) <- c("a", "b", "c")
+Yt <- Xt %*% c(1, -2, 0.5) + rnorm(20)
+
+m <- kfold_xgboost(X, Y, kfold = 5, nrounds = 30)
+
+# %% 
+GOF(m)
+GOF(m, Xt, Yt)
+
+predict(m, mode = "train")
+predict(m, Xt, mode = "test")
 ```
