@@ -1,13 +1,22 @@
 #' kfold machine learning
 #' @name kfold_ml
-#' 
+#'
+#' @param X Feature matrix (rows = observations).
+#' @param Y Response matrix (rows = observations).
+#' @param kfold Number of folds.
+#' @param FUN Model fitting function with signature `FUN(x_train, y_train, ...)`.
+#' @param ... Additional arguments forwarded to `FUN`.
+#' @param fn_chunk Fold-splitting function; defaults to [chunk_stratified()].
+#' @param .progress Show a progress bar during fold iteration.
+#' @param ntree Number of trees for [kfold_rf()].
+#'
 #' @example R/example/ex-kfold_ml.R
 #' @seealso [ranger::ranger()], [xgboost::xgboost()]
-#' 
+#'
 #' @importFrom plyr llply
 #' @importFrom furrr future_map furrr_options
 #' @export
-kfold_ml <- function(X, Y, kfold = 5, FUN, ..., 
+kfold_ml <- function(X, Y, kfold = 5, FUN, ...,
     fn_chunk = chunk_stratified, .progress=TRUE){ #, threshold = 5000
     set.seed(100)
     X = as.matrix(X)

@@ -12,8 +12,18 @@ previous_tn(x, n = 7, prefix = "", ...)
 
 \method{previous_tn}{data.frame}(x, n = 7, ...)
 }
+\arguments{
+\item{x}{Numeric vector (default method) or \code{data.frame} to lag.}
+
+\item{n}{Number of lags to create.}
+
+\item{prefix}{Character prefix prepended to each column name.}
+
+\item{...}{Ignored.}
+}
 \description{
-previous_tn
+Build a lagged matrix: column \code{t} is the original series, columns \code{t-1},
+\code{t-2}, … are progressively shifted (lagged) copies.
 }
 \examples{
 set.seed(1)

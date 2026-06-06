@@ -32,9 +32,15 @@ GOF(yobs, ...)
 \item{w}{Numeric vector, weights of every points. If w included, when
 calculating mean, Bias, MAE, RMSE and NSE, w will be taken into considered.}
 
+\item{...}{Ignored.}
+
 \item{include.cv}{If true, cv will be included.}
 
 \item{include.r}{If true, r and R2 will be included.}
+
+\item{idcol}{Column name for the id column when binding multi-column results.}
+
+\item{mode}{Label inserted into the \code{mode} column when computing multi-column GOF.}
 
 \item{test}{A list with \code{X} and \code{Y} for external testing. If NULL, GOF will be calculated}
 }

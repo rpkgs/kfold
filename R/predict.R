@@ -1,8 +1,10 @@
 #' predict for kfold object
-#' 
-#' @param mode
-#' - `train`,
-#' - `test`,
+#'
+#' @param object A `kfold` object returned by [kfold_ml()].
+#' @param newdata New feature matrix for prediction. Required when `mode = "test"`.
+#' @param ... Additional arguments forwarded to the underlying model's `predict` method.
+#' @param mode Prediction mode: `"train"` (in-sample, hold-out fold masked),
+#'   `"valid"` (out-of-fold only), or `"test"` (full new data).
 #' @export
 predict.kfold <- function(
   object, newdata = NULL, ...,

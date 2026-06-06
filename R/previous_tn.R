@@ -1,5 +1,13 @@
 #' previous_tn
 #'
+#' Build a lagged matrix: column `t` is the original series, columns `t-1`,
+#' `t-2`, … are progressively shifted (lagged) copies.
+#'
+#' @param x Numeric vector (default method) or `data.frame` to lag.
+#' @param n Number of lags to create.
+#' @param prefix Character prefix prepended to each column name.
+#' @param ... Ignored.
+#'
 #' @examples
 #' set.seed(1)
 #' x <- rnorm(10)

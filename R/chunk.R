@@ -1,7 +1,19 @@
+#' @export
 chunk <- function(x, kfold = 5) {
-  split(x, cut(seq_along(x), nchunk, labels = FALSE)) 
+  split(x, cut(seq_along(x), kfold, labels = FALSE))
 }
 
+#' Stratified k-fold split
+#'
+#' Splits observation indices into `kfold` groups, ensuring each group
+#' receives a representative range of the target variable `y`.
+#'
+#' @param y Numeric vector of target values used for stratified splitting.
+#' @param kfold Number of folds.
+#' @param seed Random seed (currently unused; seed is fixed internally).
+#'
+#' @return A named list of length `kfold`, each element an integer vector
+#'   of row indices belonging to that fold.
 #' @export
 chunk_stratified <- function(y, kfold = 5, seed = 1) {
     set.seed(1) # 固定种子，保证交叉验证结果可精确复现

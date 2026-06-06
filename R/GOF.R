@@ -81,6 +81,9 @@ GOF.default <- function(
     .GOF(yobs, ysim, w, include.cv, include.r)
 }
 
+#' @param ... Ignored.
+#' @param idcol Column name for the id column when binding multi-column results.
+#' @param mode Label inserted into the `mode` column when computing multi-column GOF.
 #' @param test A list with `X` and `Y` for external testing. If NULL, GOF will be calculated
 #' @rdname GOF
 #' @export

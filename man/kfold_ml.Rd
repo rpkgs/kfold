@@ -24,7 +24,21 @@ kfold_xgboost(X, Y, kfold = 5, FUN = xgboost, nrounds = 500, ...)
 kfold_lm(X, Y, kfold = 5, ...)
 }
 \arguments{
-\item{...}{Further arguments passed to or from other methods (currently ignored).}
+\item{X}{Feature matrix (rows = observations).}
+
+\item{Y}{Response matrix (rows = observations).}
+
+\item{kfold}{Number of folds.}
+
+\item{FUN}{Model fitting function with signature \code{FUN(x_train, y_train, ...)}.}
+
+\item{...}{Additional arguments forwarded to \code{FUN}.}
+
+\item{fn_chunk}{Fold-splitting function; defaults to \code{\link[=chunk_stratified]{chunk_stratified()}}.}
+
+\item{.progress}{Show a progress bar during fold iteration.}
+
+\item{ntree}{Number of trees for \code{\link[=kfold_rf]{kfold_rf()}}.}
 
 \item{importance}{Variable importance mode, one of 'none', 'impurity', 'impurity_corrected', 'permutation'. The 'impurity' measure is the Gini index for classification, the variance of the responses for regression and the sum of test statistics (see \code{splitrule}) for survival.}
 

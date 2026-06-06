@@ -7,10 +7,14 @@
 \method{predict}{kfold}(object, newdata = NULL, ..., mode = "test")
 }
 \arguments{
-\item{mode}{\itemize{
-\item \code{train},
-\item \code{test},
-}}
+\item{object}{A \code{kfold} object returned by \code{\link[=kfold_ml]{kfold_ml()}}.}
+
+\item{newdata}{New feature matrix for prediction. Required when \code{mode = "test"}.}
+
+\item{...}{Additional arguments forwarded to the underlying model's \code{predict} method.}
+
+\item{mode}{Prediction mode: \code{"train"} (in-sample, hold-out fold masked),
+\code{"valid"} (out-of-fold only), or \code{"test"} (full new data).}
 }
 \description{
 predict for kfold object

@@ -7,8 +7,19 @@
 kfold_calib(X, Y, FUN = xgboost, index = NULL, ..., ratio_valid = 0.3)
 }
 \arguments{
-\item{index}{index of validation set}
+\item{X}{Feature matrix (rows = observations).}
+
+\item{Y}{Response matrix (rows = observations).}
+
+\item{FUN}{Model fitting function with signature \code{FUN(x_train, y_train, ...)}.}
+
+\item{index}{Integer vector of validation row indices. If \code{NULL}, the first
+\code{floor(n * ratio_valid)} rows are used.}
+
+\item{...}{Additional arguments forwarded to \code{FUN}.}
+
+\item{ratio_valid}{Fraction of rows used as validation when \code{index = NULL}.}
 }
 \description{
-kfold_calib
+Calibrate a model on a single train/validation split.
 }

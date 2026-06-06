@@ -1,3 +1,10 @@
+#' Fit a model across multiple training datasets
+#'
+#' @param model Model fitting function with signature `model(X, Y, ...)`.
+#' @param ds_train Named list of training datasets, each a list with `X` and `Y`.
+#' @param ... Additional arguments forwarded to `model`.
+#'
+#' @return A list of fitted model objects, one per element of `ds_train`.
 #' @import xgboost
 #' @importFrom kfold kfold_xgboost
 #' @export
@@ -5,6 +12,15 @@ oneapi <- function(model, ds_train, ...) {
     objects <- map(ds_train, \(d) model(d$X, d$Y, ...), .progress = TRUE)
 }
 
+#' Compute GOF across multiple lead-time kfold objects
+#'
+#' @param objects Named list of `kfold` objects (one per lead time).
+#' @param ds_test Named list of test datasets (one per lead time), each a list
+#'   with `X` and `Y`.
+#' @param ... Ignored.
+#' @param idcol Column name for the lead-time id column.
+#'
+#' @return A `data.table` of GOF metrics with columns `lead` and `mode`.
 #' @export
 GOF_oneapi <- function(objects, ds_test, ..., idcol = "lead") {
     list(
@@ -22,6 +38,14 @@ GOF_oneapi <- function(objects, ds_test, ..., idcol = "lead") {
         select(-kfold)
 }
 
+#' Build lagged feature matrices for multiple lead times
+#'
+#' @param data_full A `data.table` / `data.frame` with columns `Q_obs`, `P`,
+#'   `PET_Romanenko`, and `Q_sim`.
+#' @param leads Integer vector of lead times (in time steps) to build features for.
+#'
+#' @return A named list (one element per lead) of lists with `X` (feature matrix)
+#'   and `Y` (response matrix).
 #' @export
 feature_leads <- function(data_full, leads = 1:12) {
     input <- data_full %>% add_previous(nlead = length(leads))
