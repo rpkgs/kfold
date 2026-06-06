@@ -1,17 +1,3 @@
-#' Fit a model across multiple training datasets
-#'
-#' @param model Model fitting function with signature `model(X, Y, ...)`.
-#' @param ds_train Named list of training datasets, each a list with `X` and `Y`.
-#' @param ... Additional arguments forwarded to `model`.
-#'
-#' @return A list of fitted model objects, one per element of `ds_train`.
-#' @import xgboost
-#' @importFrom kfold kfold_xgboost
-#' @export
-oneapi <- function(model, ds_train, ...) {
-    objects <- map(ds_train, \(d) model(d$X, d$Y, ...), .progress = TRUE)
-}
-
 #' Compute GOF across multiple lead-time kfold objects
 #'
 #' @param objects Named list of `kfold` objects (one per lead time).
@@ -22,10 +8,10 @@ oneapi <- function(model, ds_train, ...) {
 #'
 #' @return A `data.table` of GOF metrics with columns `lead` and `mode`.
 #' @export
-GOF_oneapi <- function(objects, ds_test, ..., idcol = "lead") {
+GOT_list <- function(list_kfold, list_test, ..., idcol = "lead") {
     list(
-        train = map(objects, GOF),
-        test = mapply(\(object, test) GOF(object, test), objects, ds_test, SIMPLIFY = FALSE)
+        train = map(list_kfold, GOF),
+        test = mapply(\(object, test) GOF(object, test), list_kfold, list_test, SIMPLIFY = FALSE)
     ) %>%
         map(\(l) rbindlist(l, idcol = "lead")) %>%
         rbindlist() %>%

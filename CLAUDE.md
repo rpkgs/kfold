@@ -2,91 +2,93 @@
 
 ## Package Overview
 
-`kfold` is an R package for stratified k-fold cross-validation of machine-learning models (Random Forest via `ranger`, XGBoost, linear models). It computes per-fold and aggregate GOF (Goodness of Fit) statistics for both train and valid sets.
+`kfold` is an R package for stratified k-fold cross-validation of machine-learning models (Random Forest via `ranger`, XGBoost, linear models). It computes per-fold and aggregate GOF (Goodness of Fit) statistics for train, valid, and external test sets.
 
 ## Key Files
 
-| File              | Role                                                                    |
-| ----------------- | ----------------------------------------------------------------------- |
-| `R/kford_ml.R`    | Top-level API: `kfold_ml`, `kfold_rf`, `kfold_xgboost`, `kfold_lm`      |
-| `R/kfold_calib.R` | Per-fold calibration (`kfold_calib`) and result assembly (`kfold_tidy`) |
-| `R/GOF.R`         | GOF metrics: `GOF()`, `NSE()`, `cv_coef()`                              |
-| `R/tools.R`       | `chunk_stratified()` — stratified fold splitter                         |
+| File               | Role                                                                         |
+| ------------------ | ---------------------------------------------------------------------------- |
+| `R/kford_ml.R`     | Top-level API: `kfold_ml`, `kfold_rf`, `kfold_xgboost`, `kfold_lm`          |
+| `R/kfold_calib.R`  | Per-fold calibration: `kfold_calib`                                          |
+| `R/predict.R`      | S3 predict methods: `predict.kfold`, `predict.ranger`, `predict.lm2`         |
+| `R/GOF.R`          | GOF S3 generic: `GOF()`, `GOF.default()`, `GOF.kfold()`, `NSE()`, `cv_coef` |
+| `R/chunk.R`        | Fold splitters: `chunk_stratified()`, `chunk()`                              |
+| `R/tools.R`        | Internal helpers: `listk()`, `dt_round()`, `select.matrix()`                |
+| `R/oneapi.R`       | Multi-lead-time utilities: `GOT_list()`, `feature_leads()`, `add_previous()` |
 
 ---
 
-## `gof_all` Calculation — Train vs Test
+## `kfold` S3 Object
 
-### Step 1: Fold splitting (`chunk_stratified`)
-
-`chunk_stratified(Y, kfold)` sorts observations by Y value, then shuffles within blocks of size `kfold`. This ensures each fold has a representative distribution of Y (stratified split). Returns a list of `kfold` index vectors.
-
-### Step 2: Per-fold calibration (`kfold_calib`)
-
-For fold `i` with valid indices `index_i`:
+`kfold_ml()` returns an S3 object of class `kfold`:
 
 ```r
-x_train <- X[-index_i, ]   # ~(1 - 1/k) × N rows
-x_valid  <- X[ index_i, ]   # ~(1/k) × N rows
-
-m <- FUN(x_train, y_train)          # train model
-ypred_train <- predict(m, x_train)  # in-sample prediction
-ypred_valid  <- predict(m, x_valid)   # out-of-fold prediction
-
-gof = list(
-    train = GOF(y_train, ypred_train),  # in-sample fit
-    valid  = GOF(y_valid,  ypred_valid)    # out-of-fold fit
+list(
+  data  = list(X, Y),          # full feature/response matrices
+  index = list(fold1 = ..., ), # named list of validation index vectors
+  model = list(fold1 = ..., )  # named list of fitted model objects
 )
 ```
 
-### Step 3: Aggregate `gof_all` (`kfold_tidy`)
+---
+
+## `predict.kfold` — Three Modes
 
 ```r
-gof_all <- rbind(
-    # train: column-wise MEAN of each fold's train GOF
-    cbind(kfold = "all", type = "train",
-          gof_fold[type == "train", -(1:2)][, lapply(.SD, mean)]),
-
-    # valid: single GOF call on ALL out-of-fold predictions stacked together
-    cbind(kfold = "all", type = "valid",
-          GOF(Y, ypred))   # ypred assembled from all folds' ypred_valid
-)
+predict(object, newdata = NULL, ..., mode = "test")
 ```
 
-#### `gof_all` train
+| `mode`    | Description                                                                            |
+| --------- | -------------------------------------------------------------------------------------- |
+| `"train"` | Each fold model predicts full `X`; own-fold indices set to `NA` → ensemble row means  |
+| `"valid"` | Each fold model predicts full `X`; non-own-fold indices set to `NA` → ensemble row means |
+| `"test"`  | All fold models predict `newdata` → ensemble row means (requires `newdata`)           |
 
-- **What it is**: Column-wise arithmetic mean of each fold's train-set GOF metrics.
-- **Interpretation**: Average in-sample fitting performance. Reflects how well the model memorizes the training data on average across folds. Expected to be optimistic (higher NSE/KGE, lower RMSE than valid).
+Returns a named list of per-fold prediction vectors plus an `ensemble` element (row means across folds).
 
-#### `gof_all` valid
+---
 
-- **What it is**: A **single `GOF()` call** on the full `Y` vs. globally assembled out-of-fold predictions `ypred`. Each observation's prediction comes exclusively from the fold iteration where that observation was held out.
-- **Interpretation**: Unbiased estimate of generalization performance across the entire dataset. More statistically rigorous than averaging fold-level valid GOFs, because it evaluates all N observations as one unit (no double-counting, no averaging of averages).
+## `GOF.kfold` — Train / Valid / Test
 
-#### Key asymmetry
+```r
+GOF(object)             # computes train + valid GOF on the full dataset
+GOF(object, test = list(X = ..., Y = ...))  # computes test GOF on external data
+```
 
-|                 | Aggregation method                   | Observations evaluated  |
-| --------------- | ------------------------------------ | ----------------------- |
-| `gof_all` train | Mean of fold-level statistics        | ~(1 − 1/k) × N per fold |
-| `gof_all` valid | Single GOF on pooled OOF predictions | All N observations      |
+Internally:
+
+```r
+# train: ensemble prediction with each fold's own observations masked → GOF on full Y
+ypred_train <- predict(object, mode = "train")
+gof_train   <- GOF(object$data$Y, ypred_train, mode = "train")
+
+# valid: OOF ensemble prediction → GOF on full Y (unbiased generalisation estimate)
+ypred_valid <- predict(object, mode = "valid")
+gof_valid   <- GOF(object$data$Y, ypred_valid, mode = "valid")
+
+rbind(gof_train, gof_valid)
+# → data.table with columns: kfold (fold name / "ensemble"), mode ("train"/"valid"), metrics…
+```
+
+`kfold` column holds individual fold names and `"ensemble"` (the pooled OOF row).
 
 ---
 
 ## GOF Metrics (`GOF()`)
 
-All metrics use optional per-point weights `w` (default: uniform).
+All metrics use optional per-point weights `w` (default: uniform). Invalid values (`NA`, `Inf`) are removed before all calculations.
 
-| Metric      | Formula                              | Note                                   |
-| ----------- | ------------------------------------ | -------------------------------------- | ----- | ------------------- |
-| `NSE`       | `1 - Σ(ysim - yobs)² / Σ(yobs - ȳ)²` | Nash–Sutcliffe efficiency; 1 = perfect |
-| `KGE`       | via `hydroGOF::KGE()`                | Kling–Gupta efficiency                 |
-| `RMSE`      | `√(Σw·(ysim−yobs)² / Σw)`            | Root mean square error                 |
-| `MAE`       | `Σw·                                 | ysim−yobs                              | / Σw` | Mean absolute error |
-| `Bias`      | `Σw·(ysim−yobs) / Σw`                | Signed mean error                      |
-| `Bias_perc` | `Bias / ȳ`                           | Relative bias                          |
-| `R2`, `R`   | Pearson correlation²                 | Optional via `include.r = TRUE`        |
+| Metric      | Formula / Source                       | Note                                   |
+| ----------- | -------------------------------------- | -------------------------------------- |
+| `NSE`       | `1 - Σ(ysim−yobs)² / Σ(yobs−ȳ)²`      | Nash–Sutcliffe efficiency; 1 = perfect |
+| `KGE`       | via `hydroGOF::KGE()`                  | Kling–Gupta efficiency                 |
+| `RMSE`      | `√(Σw·(ysim−yobs)² / Σw)`             | Root mean square error                 |
+| `MAE`       | `Σw·\|ysim−yobs\| / Σw`               | Mean absolute error                    |
+| `Bias`      | `Σw·(ysim−yobs) / Σw`                 | Signed mean error                      |
+| `Bias_perc` | `Bias / ȳ`                             | Relative bias                          |
+| `R2`, `R`   | Pearson correlation²                   | Optional via `include.r = TRUE`        |
 
-Invalid values (`NA`, `Inf`) are removed before all calculations.
+Default output column order: `NSE, KGE, RMSE, MAE, Bias, Bias_perc, n_sim` (plus `R2, R, pvalue` when `include.r = TRUE`).
 
 ---
 
@@ -98,3 +100,13 @@ Invalid values (`NA`, `Inf`) are removed before all calculations.
 library(future)
 plan(multisession, workers = 5)
 ```
+
+---
+
+## Multi-Lead-Time API (`R/oneapi.R`)
+
+| Function         | Description                                                                 |
+| ---------------- | --------------------------------------------------------------------------- |
+| `GOT_list()`     | Compute train + test GOF across a named list of `kfold` objects (one per lead time); returns a tidy `data.table` with a `lead` column |
+| `feature_leads()` | Build lagged feature matrices `list(X, Y)` for each lead time from a full dataset |
+| `add_previous()` | Append lagged `Q_obs` columns (`Q_t-1`, …, `Q_t-n`) to a data frame       |
