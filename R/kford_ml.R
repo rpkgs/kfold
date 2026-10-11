@@ -7,6 +7,8 @@
 #' @param FUN Model fitting function with signature `FUN(x_train, y_train, ...)`.
 #' @param ... Additional arguments forwarded to `FUN`.
 #' @param fn_chunk Fold-splitting function; defaults to [chunk_stratified()].
+#' @param ind_lst Optional list of validation row indices, one element per fold.
+#'   If given, `kfold` and `fn_chunk` are ignored.
 #' @param .progress Show a progress bar during fold iteration.
 #' @param ntree Number of trees for [kfold_rf()].
 #'
@@ -17,13 +19,13 @@
 #' @importFrom furrr future_map furrr_options
 #' @export
 kfold_ml <- function(X, Y, kfold = 5, FUN, ...,
-    fn_chunk = chunk_stratified, .progress=TRUE){ #, threshold = 5000
+    fn_chunk = chunk_stratified, ind_lst = NULL, .progress=TRUE){ #, threshold = 5000
     set.seed(100)
     X = as.matrix(X)
     Y = as.matrix(Y)
 
     # ind_lst <- createFolds(1:nrow(X), k = kfold, list = TRUE)
-    ind_lst <- fn_chunk(Y, kfold)
+    if (is.null(ind_lst)) ind_lst <- fn_chunk(Y, kfold)
 
     res <- future_map(ind_lst, kfold_calib,
         X = X, Y = Y,

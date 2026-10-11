@@ -14,6 +14,7 @@ kfold_ml(
   FUN,
   ...,
   fn_chunk = chunk_stratified,
+  ind_lst = NULL,
   .progress = TRUE
 )
 
@@ -35,6 +36,9 @@ kfold_lm(X, Y, kfold = 5, ...)
 \item{...}{Additional arguments forwarded to \code{FUN}.}
 
 \item{fn_chunk}{Fold-splitting function; defaults to \code{\link[=chunk_stratified]{chunk_stratified()}}.}
+
+\item{ind_lst}{Optional list of validation row indices, one element per fold.
+If given, \code{kfold} and \code{fn_chunk} are ignored.}
 
 \item{.progress}{Show a progress bar during fold iteration.}
 
