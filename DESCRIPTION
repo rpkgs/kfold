@@ -14,7 +14,7 @@ Imports:
     xgboost,
     data.table,
     magrittr,
-    Ipaper, plyr, furrr, future,
+    Ipaper, plyr, furrr, future, future.apply,
     dplyr, tidyselect,
     purrr
 Roxygen: list(markdown = TRUE)

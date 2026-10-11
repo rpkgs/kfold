@@ -90,11 +90,20 @@ GOF.default <- function(
 GOF.kfold <- function(yobs, test = NULL, ...) {
     object <- yobs
     if (is.null(test)) {
-        ypred_train <- predict(object, mode = "train")
-        ypred_valid <- predict(object, mode = "valid")
-        gof_train <- GOF(object$data$Y, ypred_train, mode = "train")
-        gof_valid <- GOF(object$data$Y, ypred_valid, mode = "valid")
-        rbind(gof_train, gof_valid)
+        # 每折仅预测一次；并行策略由外部 future::plan() 决定。
+        # 缓存全量预测，复用于 train 和 valid，避免嵌套并行。
+        ypred <- future.apply::future_lapply(
+            object$model, predict, object$data$X, future.seed = TRUE
+        )
+        gof <- lapply(c("train", "valid"), function(mode) {
+            pred <- Map(function(p, index) {
+                p[if (mode == "train") index else -index] <- NA_real_
+                p
+            }, ypred, object$index)
+            pred$ensemble <- rowMeans(do.call(cbind, pred), na.rm = TRUE)
+            GOF(object$data$Y, pred, mode = mode)
+        })
+        do.call(rbind, gof)
     } else {
         # test 用外部测试集: X_test 算预测, Y_test 当 yobs (二者行数须一致)
         ypred_test <- predict(object, test$X, mode = "test")
