@@ -29,21 +29,33 @@ import(magrittr)
 import(ranger)
 import(xgboost)
 importFrom(Ipaper,melt_list)
-importFrom(data.table,as.data.table)
-importFrom(data.table,data.table)
-importFrom(data.table,rbindlist)
-importFrom(dplyr,across)
-importFrom(dplyr,mutate)
-importFrom(dplyr,select)
-importFrom(furrr,furrr_options)
-importFrom(furrr,future_map)
-importFrom(future,multisession)
-importFrom(future,plan)
+importFrom(data.table,
+  as.data.table,
+  data.table,
+  rbindlist
+)
+importFrom(dplyr,
+  across,
+  mutate,
+  select
+)
+importFrom(furrr,
+  furrr_options,
+  future_map
+)
+importFrom(future,
+  multisession,
+  plan
+)
 importFrom(hydroGOF,KGE)
 importFrom(plyr,llply)
-importFrom(purrr,is_empty)
-importFrom(purrr,map)
-importFrom(stats,cor.test)
-importFrom(stats,predict)
-importFrom(stats,quantile)
-importFrom(stats,setNames)
+importFrom(purrr,
+  is_empty,
+  map
+)
+importFrom(stats,
+  cor.test,
+  predict,
+  quantile,
+  setNames
+)

@@ -12,6 +12,6 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{future}{\code{\link[future]{multisession}}, \code{\link[future]{plan}}}
+  \item{future}{\code{\link[future:multisession]{multisession()}}, \code{\link[future:plan]{plan()}}}
 }}
 
